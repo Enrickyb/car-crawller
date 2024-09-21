@@ -253,6 +253,7 @@ async function main() {
     } catch (error) {
         console.error('Erro ao fazer scraping:', error);
 
+
     } finally {
         await client.end();
         console.log('Conexão com o banco de dados fechada');
