@@ -6,11 +6,11 @@ const fs = require('fs');
 
 // Configurações do banco de dados PostgreSQL
 const client = new Client({
-    user: 'tcar',
-    host: 'localhost',
+    user: 'cardb',
+    host: '172.18.0.2',
     database: 'cardb',
-    password: 'postgres',
-    port: 5434,
+    password: 'cardb',
+    port: 5432,
 });
 
 // Função para conectar ao banco de dados
@@ -103,7 +103,7 @@ async function main() {
     await connectDB();
     const url = 'https://www.autoevolution.com/cars/';
     const startIndex = getCheckpoint();
-    const limit = 300; // Define o limite de páginas para acessar
+    const limit = 100; // Define o limite de páginas para acessar
 
     try {
         const response = await axios.get(url);
@@ -168,6 +168,7 @@ async function main() {
 
 
                     let carDetailData = {
+                        engine_specs: '',
                         cylinders: '',
                         displacement: '',
                         engine_power: '',
@@ -201,6 +202,7 @@ async function main() {
                     // Usa expressão regular para extrair os anos de produção
                     const productionYearsMatch = productionYearsText.match(/<b>Production years:<\/b>\s*(\d{4}(?:, \d{4})*)/);
 
+
                     // Verifica se encontrou os anos de produção
                     if (productionYearsMatch) {
                         productionYears = productionYearsMatch[1]; // Pega os anos encontrados
@@ -208,6 +210,7 @@ async function main() {
                     } else {
                         console.log('Production years não encontrados');
                     }
+                    carDetailData.engine_specs = $('.techdata').find('th:contains("ENGINE SPECS - ") span').text().trim()
                     carDetailData.cylinders = $('.techdata').find('td:contains("Cylinders:")').next().text().trim();
                     carDetailData.displacement = $('.techdata').find('td:contains("Displacement:")').next().text().trim();
                     carDetailData.engine_power = $('.techdata').find('td:contains("Power:")').next().text().trim();
@@ -234,6 +237,7 @@ async function main() {
                     carDetailData.fuel_economy_combined = $('.techdata').find('td:contains("Combined:")').next().text().trim() || null;
                     carDetailData.description_title = ""
                     carDetailData.description = ""
+
                     carDetailData.name = $('.sbox10.mgbot_20.mgtop_10').find('.motlisthead').contents().filter(function () {
                         return this.nodeType === 3; // Nó de texto
                     }).text().trim();
@@ -244,7 +248,8 @@ async function main() {
                     carDetailData.brand_id = await getBrandId(brandName);
 
                     console.log('Dados do carro:', carDetailData);
-                    await saveCarData(carDetailData);
+
+                    //await saveCarData(carDetailData);
 
                 }
             }
