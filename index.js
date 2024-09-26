@@ -249,7 +249,7 @@ async function main() {
 
                     console.log('Dados do carro:', carDetailData);
 
-                    //await saveCarData(carDetailData);
+                    await saveCarData(carDetailData);
 
                 }
             }
